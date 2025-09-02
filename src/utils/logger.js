@@ -1,5 +1,13 @@
 const winston = require("winston");
 const config = require("../config/config");
+const fs = require("fs");
+const path = require("path");
+
+// 确保logs目录存在
+const logsDir = path.join(process.cwd(), 'logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
 
 const logger = winston.createLogger({
   level: config.logging.level,
@@ -11,14 +19,14 @@ const logger = winston.createLogger({
   defaultMeta: { service: "bilibili-discord-bot" },
   transports: [
     new winston.transports.File({
-      filename: "error.log",
+      filename: "logs/error.log",
       level: "error",
       maxsize: 10 * 1024 * 1024, // 10MB
       maxFiles: 3, // 保留最多3个文件
       tailable: true // 保持当前文件名不变
     }),
     new winston.transports.File({
-      filename: config.logging.file,
+      filename: `logs/${config.logging.file}`,
       maxsize: 10 * 1024 * 1024, // 10MB
       maxFiles: 3, // 保留最多3个文件
       tailable: true // 保持当前文件名不变
