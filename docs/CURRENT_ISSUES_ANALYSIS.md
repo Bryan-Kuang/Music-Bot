@@ -93,3 +93,4 @@ Select menu interaction (失败? - 需要确认)
 ```
 
 **结论**：问题可能在 Discord 交互层面，而不是业务逻辑层面。
+

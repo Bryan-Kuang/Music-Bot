@@ -100,3 +100,4 @@ await interaction.editReply({ embeds: [successEmbed] });
    - 实现更智能的重试机制
    - 添加播放状态监控
    - 改进错误恢复策略
+
