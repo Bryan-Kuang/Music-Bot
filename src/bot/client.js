@@ -119,10 +119,15 @@ class BotClient {
     // Load interaction handlers
     const interactionHandler = require("./events/interactionCreate");
 
-    // Interaction handling (slash commands and buttons)
+    // Interaction handling (slash commands, buttons, and select menus)
     this.client.on("interactionCreate", async (interaction) => {
       // Handle button interactions
       if (interaction.isButton()) {
+        return await interactionHandler.execute(interaction);
+      }
+
+      // Handle select menu interactions
+      if (interaction.isStringSelectMenu()) {
         return await interactionHandler.execute(interaction);
       }
 
