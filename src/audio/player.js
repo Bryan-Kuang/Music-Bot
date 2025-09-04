@@ -383,6 +383,10 @@ class AudioPlayer {
         }
       }
 
+      // 🔧 修复：在创建新的音频资源前先清理旧的FFmpeg进程
+      // 这可以防止在queue loop模式下播放前几秒旧内容的问题
+      this.cleanupFFmpegProcess();
+      
       // Create audio resource from URL
       logger.debug("Creating audio resource for playback");
       const audioResource = await this.createAudioResource(
