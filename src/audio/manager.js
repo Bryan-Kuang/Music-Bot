@@ -363,13 +363,16 @@ class AudioManager {
    * @param {string} guildId - Discord guild ID
    * @returns {Object} - Result object
    */
-  stopPlayback(guildId) {
+  async stopPlayback(guildId) {
     const player = this.getPlayer(guildId);
-    player.leaveVoiceChannel();
+    const stopped = await player.stop();
 
     return {
-      success: true,
-      message: "Stopped playback and left voice channel",
+      success: stopped,
+      message: stopped
+        ? "Stopped playback, cleared queue, and left voice channel"
+        : "Failed to stop playback",
+      player: player.getState(),
     };
   }
 

@@ -27,7 +27,7 @@ class AudioPlayer {
     this.isPlaying = false;
     this.isPaused = false;
     this.volume = 0.5;
-    this.loopMode = "track"; // none, track, queue - 🎵 默认为single loop
+    this.loopMode = "queue"; // none, track, queue - 🎵 默认为queue loop
     this.currentGuild = null;
     this.startTime = null; // Track start time for progress calculation
     this.progressInterval = null; // Interval for progress updates
