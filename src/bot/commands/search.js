@@ -105,17 +105,17 @@ module.exports = {
       );
 
       // Create search results selection menu
-      const searchButtons = ButtonBuilders.createSearchResultsMenu({
-        results: searchResult.results,
-        keyword,
-      });
+      const searchButtons = ButtonBuilders.createSearchResultsMenu(
+        searchResult.results,
+        keyword
+      );
 
       const response = {
         embeds: [searchEmbed],
       };
 
       if (searchButtons) {
-        response.components = searchButtons;
+        response.components = [searchButtons];
       }
 
       await interaction.editReply(response);

@@ -621,7 +621,7 @@ async function handleSelectMenuInteraction(interaction) {
         // Search again to get the video data
         const searchResults = await extractor.searchVideos(keyword, 25);
         
-        if (!searchResults.success || !searchResults.videos || resultIndex >= searchResults.videos.length) {
+        if (!searchResults.success || !searchResults.results || resultIndex >= searchResults.results.length) {
           const errorEmbed = EmbedBuilders.createErrorEmbed(
             "Video Not Found",
             "The selected video is no longer available.",
@@ -635,8 +635,9 @@ async function handleSelectMenuInteraction(interaction) {
           });
         }
 
-        const selectedVideo = searchResults.videos[resultIndex];
-        const videoUrl = `https://www.bilibili.com/video/${selectedVideo.id}`;
+        const selectedVideo = searchResults.results[resultIndex];
+        // Use the URL from the search result or construct av format URL
+        const videoUrl = selectedVideo.url || `https://www.bilibili.com/video/av${selectedVideo.id}`;
         
         // Add the video to the queue using AudioManager
         const result = await AudioManager.playBilibiliVideo(interaction, videoUrl);

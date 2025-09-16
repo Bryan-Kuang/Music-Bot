@@ -136,6 +136,19 @@ class Formatters {
   }
 
   /**
+   * Format number with thousands separators
+   * @param {number} num - Number to format
+   * @returns {string} - Formatted number string
+   */
+  static formatNumber(num) {
+    if (!num || isNaN(num)) {
+      return "0";
+    }
+
+    return num.toLocaleString();
+  }
+
+  /**
    * Escape Discord markdown characters
    * @param {string} text - Text to escape
    * @returns {string} - Escaped text

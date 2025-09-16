@@ -362,14 +362,17 @@ class ButtonBuilders {
    * @returns {ActionRowBuilder} - Discord action row with select menu
    */
   static createSearchResultsMenu(results, keyword) {
+    const safeKeyword = keyword || 'search';
+    const safeResults = Array.isArray(results) ? results : [];
+    
     const selectMenu = new StringSelectMenuBuilder()
-      .setCustomId(`search_select_${keyword.replace(/\s+/g, '_')}`)
+      .setCustomId(`search_select_${safeKeyword.replace(/\s+/g, '_')}`)
       .setPlaceholder('Choose a video to add to queue...')
       .setMinValues(1)
       .setMaxValues(1);
 
     // Add up to 25 options (Discord limit)
-    results.slice(0, 25).forEach((result, index) => {
+    safeResults.slice(0, 25).forEach((result, index) => {
       const title = result.title.length > 90 ? result.title.substring(0, 90) + "..." : result.title;
       const uploader = result.uploader || "Unknown";
       const duration = result.duration || "Unknown";

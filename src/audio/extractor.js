@@ -325,6 +325,7 @@ class BilibiliExtractor {
    */
   parseVideoMetadata(videoData) {
     const metadata = {
+      success: true,
       title: videoData.title || "Unknown Title",
       description: videoData.description || "",
       duration: videoData.duration || 0,
@@ -336,6 +337,10 @@ class BilibiliExtractor {
       videoId: this.extractVideoId(
         videoData.webpage_url || videoData.original_url
       ),
+      id: this.extractVideoId(
+        videoData.webpage_url || videoData.original_url
+      ),
+      url: videoData.webpage_url || videoData.original_url,
       webpage_url: videoData.webpage_url,
     };
 
