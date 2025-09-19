@@ -173,7 +173,7 @@ class Formatters {
    * @returns {string} - Human readable duration
    */
   static formatDuration(seconds) {
-    if (!seconds || seconds < 0) {
+    if (!seconds || seconds < 0 || isNaN(seconds)) {
       return "Unknown duration";
     }
 

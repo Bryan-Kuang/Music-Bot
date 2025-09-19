@@ -89,7 +89,7 @@ class EmbedBuilders {
       });
     }
 
-    // Loop mode indicator (fix display issue)
+    // Loop mode indicator (f ix display issue)
     const loopEmojis = {
       none: "➡️ Off",
       track: "🔂 Track", 
@@ -157,7 +157,6 @@ class EmbedBuilders {
 
     description += `📊 **Queue Overview:**\n`;
     description += `• **${queue.length}** tracks total\n`;
-    description += `• **${Formatters.formatDuration(queue.reduce((total, track) => total + (track.duration || 0), 0))}** total duration\n`;
     description += `• Page **${page}** of **${totalPages}**\n\n`;
 
     // Enhanced track listing with better formatting
@@ -167,17 +166,16 @@ class EmbedBuilders {
       const globalIndex = startIndex + index + 1;
       const position = globalIndex.toString().padStart(2, '0');
       const title = Formatters.escapeMarkdown(video.title);
-      const duration = video.duration ? Formatters.formatDuration(video.duration) : "Unknown";
       const uploader = video.uploader ? Formatters.escapeMarkdown(video.uploader) : "Unknown";
       
       // Use different formatting for different positions
       if (globalIndex <= 3) {
         // Highlight top 3 tracks
         description += `\`${position}.\` **${title}**\n`;
-        description += `     ⏱️ \`${duration}\` • 👤 ${uploader}\n\n`;
+        description += `     👤 ${uploader}\n\n`;
       } else {
         // Compact format for other tracks
-        description += `\`${position}.\` ${title} • \`${duration}\`\n`;
+        description += `\`${position}.\` ${title}\n`;
       }
     });
 
@@ -195,17 +193,6 @@ class EmbedBuilders {
     // Add queue statistics as fields
     const stats = [];
     
-    // Calculate average duration
-    const validDurations = queue.filter(track => track.duration > 0);
-    if (validDurations.length > 0) {
-      const avgDuration = validDurations.reduce((sum, track) => sum + track.duration, 0) / validDurations.length;
-      stats.push({
-        name: "📊 Average Duration",
-        value: `\`${Formatters.formatDuration(Math.round(avgDuration))}\``,
-        inline: true,
-      });
-    }
-
     // Show unique uploaders count
     const uniqueUploaders = new Set(queue.filter(track => track.uploader).map(track => track.uploader));
     if (uniqueUploaders.size > 0) {
