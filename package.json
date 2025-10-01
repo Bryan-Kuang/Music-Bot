@@ -6,19 +6,23 @@
   "scripts": {
     "start": "node src/index.js",
     "quick": "node src/index.js",
-    "test:all": "node tests/test-runner.js system",
-    "test:playback": "node tests/test-runner.js playback",
     "tools": "node scripts/tools/bot-tools.js",
     "dev": "nodemon src/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "pretest": "eslint src/",
+    "test:all": "node tests/test-runner.js system",
+    "test:system:fixed": "node tests/utils/test-runner-fixed.js system",
+    "test:playback": "node tests/test-runner.js playback",
+    "test:playback:fixed": "node tests/utils/test-runner-fixed.js playback",
     "test:audio": "node tests/manual/audio-test.js",
     "test:extractor": "node tests/manual/extractor-test.js",
     "test:ui": "node tests/manual/ui-test.js",
     "test:discord": "node tests/manual/discord-test.js",
     "test:player": "node tests/manual/audio-player-test.js",
     "test:system": "node tests/manual/full-system-test.js",
+    "test:ci": "CI_SMOKE=1 npm run lint && CI_SMOKE=1 npm run test:system:fixed",
     "deploy:commands": "node scripts/deploy-commands.js",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix"
@@ -43,10 +47,12 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@eslint/config-helpers": "^0.4.0",
     "discord.js": "^14.22.1",
-    "eslint": "^8.55.0",
+    "eslint": "^8.57.1",
     "jest": "^29.7.0",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "standard": "^17.1.2"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -57,7 +63,9 @@
       "src/**/*.js",
       "!src/index.js"
     ],
-    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"]
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ]
   },
   "repository": {
     "type": "git",

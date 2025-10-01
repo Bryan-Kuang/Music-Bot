@@ -484,7 +484,7 @@ class AudioManager {
       playingGuilds: 0,
     };
 
-    for (const [guildId, player] of this.players) {
+    for (const [_guildId, player] of this.players) {
       if (player.voiceConnection) {
         stats.activeConnections++;
       }
@@ -575,7 +575,7 @@ class AudioManager {
    * Cleanup resources
    */
   cleanup() {
-    for (const [guildId, player] of this.players) {
+    for (const [_guildId, player] of this.players) {
       player.leaveVoiceChannel();
     }
     this.players.clear();

@@ -69,8 +69,9 @@ module.exports = {
         loopMode: result.player.loopMode,
       });
 
+      // Replace undefined embed variables with successEmbed
       await interaction.reply({
-        embeds: [pauseEmbed],
+        embeds: [successEmbed],
         components: controlButtons, // Now returns array of ActionRowBuilders
       });
 

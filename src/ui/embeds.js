@@ -21,7 +21,7 @@ class EmbedBuilders {
       totalQueue = 0,
       isPlaying = true,
       loopMode = "none",
-      volume = 50,
+      _volume = 50,
     } = options;
 
     // Modern gradient colors for different states

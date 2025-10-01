@@ -218,6 +218,7 @@ class BotClient {
       require("./commands/nowplaying"),
       require("./commands/help"),
       require("./commands/search"),
+      require("./commands/hachimi"),
     ];
 
     for (const command of commands) {

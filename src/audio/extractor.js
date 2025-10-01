@@ -3,7 +3,7 @@
  * Handles video URL processing and audio stream extraction
  */
 
-const axios = require("axios");
+const _axios = require("axios");
 const { spawn } = require("child_process");
 const logger = require("../utils/logger");
 const UrlValidator = require("../utils/validator");
@@ -704,7 +704,7 @@ class BilibiliExtractor {
    * @returns {Promise<Array>} - Array of video details
    */
   async getVideoDetailsForSearch(videoIds) {
-    const results = [];
+    const _results = [];
     
     // Dynamic concurrent limit based on number of videos
     const maxConcurrent = Math.min(5, Math.max(2, Math.ceil(videoIds.length / 3)));
@@ -768,7 +768,7 @@ class BilibiliExtractor {
       .filter(result => result.status === 'fulfilled' && result.value)
       .map(result => result.value)
       .sort((a, b) => a.index - b.index) // Maintain original order
-      .map(({ index, ...rest }) => rest); // Remove index field
+      .map(({ index: _index, ...rest }) => rest); // Remove index field (underscore to satisfy lint)
     
     logger.debug("Batch video details extraction completed", {
       totalRequested: videoIds.length,

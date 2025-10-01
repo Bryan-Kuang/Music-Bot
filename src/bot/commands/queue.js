@@ -26,7 +26,12 @@ module.exports = {
       // Create queue embed
       const queueEmbed = EmbedBuilders.createQueueEmbed(
         queueInfo.queue,
-        queueInfo.state.currentIndex
+        {
+          currentTrack: queueInfo.currentTrack,
+          page: 1,
+          itemsPerPage: 10,
+          totalPages: Math.ceil(queueInfo.state.queueLength / 10) || 1,
+        }
       );
 
       // Create queue management buttons

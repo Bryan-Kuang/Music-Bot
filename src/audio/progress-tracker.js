@@ -18,7 +18,7 @@ class ProgressTracker {
    * @param {Object} message - Discord message to update
    * @param {Object} player - Audio player instance
    */
-  startTracking(guildId, message, playerState) {
+  startTracking(guildId, message, _playerState) {
     // Clear existing tracker
     this.stopTracking(guildId);
 

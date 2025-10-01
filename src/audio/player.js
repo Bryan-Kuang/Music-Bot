@@ -443,7 +443,6 @@ class AudioPlayer {
         });
 
         // Check if FFmpeg is available
-        const { spawn } = require("child_process");
         const ffmpegCheck = spawn("ffmpeg", ["-version"]);
 
         ffmpegCheck.on("error", (error) => {
@@ -548,7 +547,7 @@ class AudioPlayer {
             lastDataTime = Date.now(); // 更新最后数据时间
           });
           
-          ffmpegProcess.stdout.on("data", (data) => {
+          ffmpegProcess.stdout.on("data", (_data) => {
             lastDataTime = Date.now(); // 更新最后数据时间 - 修复：确保stdout数据也更新活跃时间
           });
 
@@ -749,20 +748,7 @@ class AudioPlayer {
     return false;
   }
 
-  /**
-   * Stop playback and clear queue
-   */
-  stop() {
-    this.audioPlayer.stop();
-    
-    // 🔧 修复：清理FFmpeg进程避免"Broken pipe"错误
-    this.cleanupFFmpegProcess();
-    
-    this.currentTrack = null;
-    this.currentIndex = -1;
-    this.isPlaying = false;
-    this.isPaused = false;
-  }
+  // Removed duplicate stop() method - unified to async stop() implementation below
 
   /**
    * Clear the queue

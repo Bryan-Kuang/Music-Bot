@@ -18,8 +18,8 @@ class ButtonBuilders {
       canPrevious = false,
       hasQueue = false,
       loopMode = "none",
-      volume = 50,
-      isShuffled = false,
+      _volume = 50,
+      _isShuffled = false,
     } = options;
 
     const row1 = new ActionRowBuilder();
@@ -93,9 +93,9 @@ class ButtonBuilders {
   static createQueueControls(options = {}) {
     const {
       hasQueue = false,
-      canShuffle = false,
-      isShuffled = false,
-      canClear = false,
+      _canShuffle = false,
+      _isShuffled = false,
+      _canClear = false,
       currentPage = 1,
       totalPages = 1,
     } = options;
@@ -326,30 +326,7 @@ class ButtonBuilders {
    * @param {number} currentVolume - Current volume (0-100)
    * @returns {ActionRowBuilder} - Discord action row with volume buttons
    */
-  static createVolumeControls(currentVolume = 50) {
-    const row = new ActionRowBuilder();
-
-    row.addComponents(
-      new ButtonBuilder()
-        .setCustomId("volume_down")
-        .setLabel("🔉")
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(currentVolume <= 0),
-      new ButtonBuilder()
-        .setCustomId("volume_up")
-        .setLabel("🔊")
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(currentVolume >= 100),
-      new ButtonBuilder()
-        .setCustomId("volume_mute")
-        .setLabel(currentVolume === 0 ? "🔇" : "🔇")
-        .setStyle(
-          currentVolume === 0 ? ButtonStyle.Danger : ButtonStyle.Secondary
-        )
-    );
-
-    return row;
-  }
+  // Duplicate createVolumeControls removed; use the options-based version above.
 
   /**
    * Create disabled buttons (for expired interactions)
