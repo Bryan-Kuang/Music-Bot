@@ -4,9 +4,9 @@
  */
 
 const { SlashCommandBuilder } = require("discord.js");
-const PlayerControl = require("../../player_control");
+const PlayerControl = require("../../control/player_control");
 const InterfaceUpdater = require("../../ui/interface_updater");
-const logger = require("../../logger_service");
+const logger = require("../../services/logger_service");
 
 module.exports = {
   data: new SlashCommandBuilder()

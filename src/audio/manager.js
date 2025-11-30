@@ -4,7 +4,7 @@
  */
 
 const AudioPlayer = require("./player");
-const logger = require("../utils/logger");
+const logger = require("../services/logger_service");
 
 class AudioManager {
   constructor() {

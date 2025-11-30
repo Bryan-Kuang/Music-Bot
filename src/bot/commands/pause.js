@@ -4,9 +4,9 @@
  */
 
 const { SlashCommandBuilder } = require("discord.js");
-const PlayerControl = require("../../player_control");
+const PlayerControl = require("../../control/player_control");
 const InterfaceUpdater = require("../../ui/interface_updater");
-const logger = require("../../logger_service");
+const logger = require("../../services/logger_service");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,6 +28,7 @@ module.exports = {
         });
       }
 
+      await interaction.reply({ content: "执行中...", ephemeral: true })
       InterfaceUpdater.setPlaybackContext(
         interaction.guild.id,
         interaction.channelId
@@ -41,7 +42,7 @@ module.exports = {
         });
       }
 
-      await interaction.reply({ content: "⏸️ Paused", ephemeral: true });
+      await interaction.editReply("⏸️ 已暂停");
 
       logger.info("Pause command executed successfully", {
         user: user.username,
@@ -53,7 +54,11 @@ module.exports = {
         stack: error.stack,
       });
 
-      await interaction.reply({ content: "Pause failed", ephemeral: true });
+      if (interaction.replied || interaction.deferred) {
+        await interaction.editReply("暂停失败")
+      } else {
+        await interaction.reply({ content: "暂停失败", ephemeral: true })
+      }
     }
   },
 };

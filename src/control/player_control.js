@@ -1,6 +1,6 @@
 const EventEmitter = require('events')
-const AudioManager = require('./audio/manager')
-const logger = require('./logger_service')
+const AudioManager = require('../audio/manager')
+const logger = require('../services/logger_service')
 
 class PlayerControl {
   constructor() {
@@ -111,4 +111,3 @@ class PlayerControl {
 }
 
 module.exports = new PlayerControl()
-

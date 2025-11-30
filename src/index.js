@@ -6,7 +6,7 @@
 const BotClient = require("./bot/client");
 const BilibiliExtractor = require("./audio/extractor");
 const AudioManager = require("./audio/manager");
-const logger = require("./utils/logger");
+const logger = require("./services/logger_service");
 const config = require("./config/config");
 
 class BilibiliDiscordBot {

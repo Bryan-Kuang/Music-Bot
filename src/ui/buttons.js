@@ -394,47 +394,7 @@ class ButtonBuilders {
    * @param {string} customId - Button custom ID
    * @returns {Function|null} - Handler function or null
    */
-  static getButtonHandler(customId) {
-    const handlers = {
-      prev: require("../bot/commands/prev"),
-      pause_resume: async (interaction) => {
-        // Determine if currently playing to choose pause or resume
-        // This would be implemented with the audio player state
-        const isPlaying = true; // Placeholder
-
-        if (isPlaying) {
-          return require("../bot/commands/pause").execute(interaction);
-        } else {
-          return require("../bot/commands/resume").execute(interaction);
-        }
-      },
-      skip: require("../bot/commands/skip"),
-      queue: require("../bot/commands/queue"),
-      queue_clear: async (interaction) => {
-        // Implement queue clear functionality
-        await interaction.reply({
-          content: "🗑️ Queue cleared!",
-          ephemeral: true,
-        });
-      },
-      queue_shuffle: async (interaction) => {
-        // Implement queue shuffle functionality
-        await interaction.reply({
-          content: "🔀 Queue shuffled!",
-          ephemeral: true,
-        });
-      },
-      queue_loop: async (interaction) => {
-        // Implement loop toggle functionality
-        await interaction.reply({
-          content: "🔁 Loop toggled!",
-          ephemeral: true,
-        });
-      },
-    };
-
-    return handlers[customId] || null;
-  }
+  // Removed legacy getButtonHandler; interaction routing handled centrally in interactionCreate
 
   /**
    * Create search results selection menu

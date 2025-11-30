@@ -4,9 +4,9 @@
  */
 
 const { SlashCommandBuilder } = require("discord.js");
-const PlayerControl = require("../../player_control");
+const PlayerControl = require("../../control/player_control");
 const InterfaceUpdater = require("../../ui/interface_updater");
-const logger = require("../../logger_service");
+const logger = require("../../services/logger_service");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -25,12 +25,13 @@ module.exports = {
         return await interaction.reply({ content: "Voice channel required", ephemeral: true })
       }
 
+      await interaction.reply({ content: "执行中...", ephemeral: true })
       InterfaceUpdater.setPlaybackContext(interaction.guild.id, interaction.channelId)
       const ok = await PlayerControl.next(interaction.guild.id)
       if (!ok) {
-        return await interaction.reply({ content: "No next track", ephemeral: true })
+        return await interaction.editReply("没有下一首")
       }
-      await interaction.reply({ content: "⏭️ Skipped", ephemeral: true })
+      await interaction.editReply("⏭️ 已跳过")
 
       logger.info("Skip command executed successfully", {
         user: user.username

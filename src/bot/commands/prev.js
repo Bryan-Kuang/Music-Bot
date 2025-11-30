@@ -4,9 +4,9 @@
  */
 
 const { SlashCommandBuilder } = require("discord.js");
-const PlayerControl = require("../../player_control");
+const PlayerControl = require("../../control/player_control");
 const InterfaceUpdater = require("../../ui/interface_updater");
-const logger = require("../../logger_service");
+const logger = require("../../services/logger_service");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,18 +28,16 @@ module.exports = {
         });
       }
 
+      await interaction.reply({ content: "执行中...", ephemeral: true })
       InterfaceUpdater.setPlaybackContext(
         interaction.guild.id,
         interaction.channelId
       );
       const ok = await PlayerControl.prev(interaction.guild.id);
       if (!ok) {
-        return await interaction.reply({
-          content: "No previous track",
-          ephemeral: true,
-        });
+        return await interaction.editReply("没有上一首");
       }
-      await interaction.reply({ content: "⏮️ Previous", ephemeral: true });
+      await interaction.editReply("⏮️ 已返回上一首");
 
       logger.info("Previous command executed successfully", {
         user: user.username,
@@ -51,7 +49,11 @@ module.exports = {
         stack: error.stack,
       });
 
-      await interaction.reply({ content: "Previous failed", ephemeral: true });
+      if (interaction.replied || interaction.deferred) {
+        await interaction.editReply("上一首失败");
+      } else {
+        await interaction.reply({ content: "上一首失败", ephemeral: true });
+      }
     }
   },
 };

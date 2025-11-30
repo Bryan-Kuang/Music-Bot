@@ -6,10 +6,10 @@
 const { SlashCommandBuilder } = require("discord.js");
 const EmbedBuilders = require("../../ui/embeds");
 const AudioManager = require("../../audio/manager");
-const PlaylistManager = require("../../playlist_manager");
-const PlayerControl = require("../../player_control");
+const PlaylistManager = require("../../playlist/playlist_manager");
+const PlayerControl = require("../../control/player_control");
 const InterfaceUpdater = require("../../ui/interface_updater");
-const logger = require("../../logger_service");
+const logger = require("../../services/logger_service");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -197,7 +197,6 @@ module.exports = {
                 interaction.guild.id,
                 interaction.channelId
               );
-              PlayerControl.notifyState(interaction.guild.id);
               nowPlayingSent = true;
             } catch (err) {
               logger.warn("Failed to start playback on first Hachimi track", {
@@ -265,7 +264,6 @@ module.exports = {
           interaction.guild.id,
           interaction.channelId
         );
-        PlayerControl.notifyState(interaction.guild.id);
       }
 
       logger.info("Hachimi playlist created successfully", {

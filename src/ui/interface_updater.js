@@ -1,6 +1,6 @@
 const EmbedBuilders = require('../ui/embeds')
 const ButtonBuilders = require('../ui/buttons')
-const logger = require('../logger_service')
+const logger = require('../services/logger_service')
 
 class InterfaceUpdater {
   constructor() {

@@ -1,4 +1,4 @@
-const PlayerControl = require('../../src/player_control')
+const PlayerControl = require('../../src/control/player_control')
 
 test('player_control emits state on notifyState', () => {
   const mockPlayer = { getState: () => ({ isPlaying: false, isPaused: false, currentTrack: null, currentIndex: -1, queueLength: 0, hasNext: false, hasPrevious: false, loopMode: 'none' }) }
@@ -11,4 +11,3 @@ test('player_control emits state on notifyState', () => {
   expect(received.guildId).toBe('guild-1')
   expect(received.state.isPlaying).toBe(false)
 })
-

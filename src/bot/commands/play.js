@@ -6,10 +6,10 @@
 const { SlashCommandBuilder } = require("discord.js");
 const UrlValidator = require("../../utils/validator");
 const AudioManager = require("../../audio/manager");
-const PlaylistManager = require("../../playlist_manager");
-const PlayerControl = require("../../player_control");
+const PlaylistManager = require("../../playlist/playlist_manager");
+const PlayerControl = require("../../control/player_control");
 const InterfaceUpdater = require("../../ui/interface_updater");
-const logger = require("../../logger_service");
+const logger = require("../../services/logger_service");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -81,9 +81,8 @@ module.exports = {
       if (!player.isPlaying && !player.isPaused) {
         await PlayerControl.play(interaction.guild.id);
       }
-      PlayerControl.notifyState(interaction.guild.id);
       await interaction.reply({
-        content: "🎵 Added and playing",
+        content: "🎵 已添加并开始播放",
         ephemeral: true,
       });
       logger.info("Play command completed", {

@@ -6,7 +6,9 @@
 const AudioManager = require("../../audio/manager");
 const EmbedBuilders = require("../../ui/embeds");
 const ButtonBuilders = require("../../ui/buttons");
-const logger = require("../../utils/logger");
+const PlayerControl = require("../../control/player_control");
+const InterfaceUpdater = require("../../ui/interface_updater");
+const logger = require("../../services/logger_service");
 
 module.exports = {
   name: "interactionCreate",
@@ -40,8 +42,11 @@ async function handleButtonInteraction(interaction) {
     });
 
     // Immediately defer reply for all button interactions to avoid 3-second timeout
-    const shouldBeEphemeral = ["pause_resume", "skip", "prev", "stop"].includes(customId);
-    await interaction.deferReply({ ephemeral: shouldBeEphemeral });
+    if (["pause_resume", "skip", "prev", "stop"].includes(customId)) {
+      await interaction.deferUpdate();
+    } else {
+      await interaction.deferReply();
+    }
 
     // Check if user is in a voice channel for control buttons
     const controlButtons = ["pause_resume", "skip", "prev", "stop"];
@@ -61,7 +66,30 @@ async function handleButtonInteraction(interaction) {
       }
     }
 
-    // Handle button interaction with audio manager
+    // Route control buttons to PlayerControl (event-driven)
+    if (["pause_resume", "skip", "prev", "stop"].includes(customId)) {
+      InterfaceUpdater.setPlaybackContext(
+        interaction.guild.id,
+        interaction.channelId
+      );
+      const player = AudioManager.getPlayer(interaction.guild.id);
+      if (customId === "pause_resume") {
+        if (player.isPlaying) {
+          await PlayerControl.pause(interaction.guild.id);
+        } else if (player.isPaused) {
+          await PlayerControl.resume(interaction.guild.id);
+        }
+      } else if (customId === "skip") {
+        await PlayerControl.next(interaction.guild.id);
+      } else if (customId === "prev") {
+        await PlayerControl.prev(interaction.guild.id);
+      } else if (customId === "stop") {
+        await PlayerControl.stop(interaction.guild.id);
+      }
+      return;
+    }
+
+    // Non-control buttons keep AudioManager workflow
     const result = await AudioManager.handleButtonInteraction(interaction);
 
     if (!result.success && !result.showMenu) {
@@ -196,15 +224,12 @@ async function handleButtonInteraction(interaction) {
 
       case "queue": {
         const queueInfo = AudioManager.getQueue(interaction.guild.id);
-        responseEmbed = EmbedBuilders.createQueueEmbed(
-          queueInfo.queue,
-          {
-            currentTrack: queueInfo.currentTrack,
-            page: 1,
-            itemsPerPage: 10,
-            totalPages: Math.ceil(queueInfo.state.queueLength / 10) || 1,
-          }
-        );
+        responseEmbed = EmbedBuilders.createQueueEmbed(queueInfo.queue, {
+          currentTrack: queueInfo.currentTrack,
+          page: 1,
+          itemsPerPage: 10,
+          totalPages: Math.ceil(queueInfo.state.queueLength / 10) || 1,
+        });
 
         responseButtons = ButtonBuilders.createQueueControls({
           hasQueue: queueInfo.state.queueLength > 0,
@@ -288,7 +313,7 @@ async function handleButtonInteraction(interaction) {
 
       case "queue_remove": {
         const queueInfo = AudioManager.getQueue(interaction.guild.id);
-        
+
         if (!queueInfo.queue || queueInfo.queue.length === 0) {
           responseEmbed = EmbedBuilders.createErrorEmbed(
             "Queue Empty",
@@ -398,9 +423,9 @@ async function handleSelectMenuInteraction(interaction) {
       let responseButtons;
 
       if (selectedValue === "clear_all" || selectedValue === "remove_all") {
-        // Clear all tracks from queue
-        result = AudioManager.clearQueue(interaction.guild.id);
-        
+        const PlaylistManager = require("../../playlist/playlist_manager");
+        result = { success: PlaylistManager.clear(interaction.guild.id) };
+
         if (!result.success) {
           const errorEmbed = EmbedBuilders.createErrorEmbed(
             "Clear Queue Failed",
@@ -443,10 +468,12 @@ async function handleSelectMenuInteraction(interaction) {
             embeds: [errorEmbed],
           });
         }
-        
+
         const index = parseInt(indexMatch[1]);
-        result = AudioManager.removeFromQueue(interaction.guild.id, index);
-        
+        const PlaylistManager = require("../../playlist/playlist_manager");
+        const ok = PlaylistManager.remove(interaction.guild.id, index);
+        result = { success: ok };
+
         if (!result.success) {
           const errorEmbed = EmbedBuilders.createErrorEmbed(
             "Remove Track Failed",
@@ -477,15 +504,12 @@ async function handleSelectMenuInteraction(interaction) {
 
       // Update the original message with new queue info
       const queueInfo = AudioManager.getQueue(interaction.guild.id);
-      const queueEmbed = EmbedBuilders.createQueueEmbed(
-        queueInfo.queue,
-        {
-          currentTrack: queueInfo.currentTrack,
-          page: 1,
-          itemsPerPage: 10,
-          totalPages: Math.ceil(queueInfo.state.queueLength / 10) || 1,
-        }
-      );
+      const queueEmbed = EmbedBuilders.createQueueEmbed(queueInfo.queue, {
+        currentTrack: queueInfo.currentTrack,
+        page: 1,
+        itemsPerPage: 10,
+        totalPages: Math.ceil(queueInfo.state.queueLength / 10) || 1,
+      });
 
       const response = {
         embeds: [queueEmbed],
@@ -566,7 +590,7 @@ async function handleSelectMenuInteraction(interaction) {
       });
     } else if (customId.startsWith("search_select_")) {
       const selectedValue = interaction.values[0];
-      
+
       logger.debug("Search result select menu interaction received", {
         selectedValue,
         user: user.username,
@@ -609,10 +633,10 @@ async function handleSelectMenuInteraction(interaction) {
       }
 
       const resultIndex = parseInt(indexMatch[1]);
-      
+
       // Get the search keyword from custom ID
       const keyword = customId.replace("search_select_", "").replace(/_/g, " ");
-      
+
       try {
         // Get the extractor and perform search again to get the selected video URL
         const extractor = AudioManager.getExtractor();
@@ -632,8 +656,12 @@ async function handleSelectMenuInteraction(interaction) {
 
         // Search again to get the video data
         const searchResults = await extractor.searchVideos(keyword, 25);
-        
-        if (!searchResults.success || !searchResults.results || resultIndex >= searchResults.results.length) {
+
+        if (
+          !searchResults.success ||
+          !searchResults.results ||
+          resultIndex >= searchResults.results.length
+        ) {
           const errorEmbed = EmbedBuilders.createErrorEmbed(
             "Video Not Found",
             "The selected video is no longer available.",
@@ -649,11 +677,16 @@ async function handleSelectMenuInteraction(interaction) {
 
         const selectedVideo = searchResults.results[resultIndex];
         // Use the URL from the search result or construct av format URL
-        const videoUrl = selectedVideo.url || `https://www.bilibili.com/video/av${selectedVideo.id}`;
-        
+        const videoUrl =
+          selectedVideo.url ||
+          `https://www.bilibili.com/video/av${selectedVideo.id}`;
+
         // Add the video to the queue using AudioManager
-        const result = await AudioManager.playBilibiliVideo(interaction, videoUrl);
-        
+        const result = await AudioManager.playBilibiliVideo(
+          interaction,
+          videoUrl
+        );
+
         if (!result.success) {
           const errorEmbed = EmbedBuilders.createErrorEmbed(
             "Failed to Add Video",
@@ -683,7 +716,6 @@ async function handleSelectMenuInteraction(interaction) {
           user: user.username,
           guild: interaction.guild?.name,
         });
-        
       } catch (error) {
         logger.error("Failed to add video from search results", {
           error: error.message,

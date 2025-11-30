@@ -54,3 +54,4 @@ module.exports = {
   error: (message, context) => log('error', message, context),
   fatal: (message, context) => log('error', message, context)
 }
+

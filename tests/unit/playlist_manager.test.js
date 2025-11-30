@@ -1,4 +1,4 @@
-const PlaylistManager = require('../../src/playlist_manager')
+const PlaylistManager = require('../../src/playlist/playlist_manager')
 
 test('playlist_manager add emits text message', async () => {
   const mockTrack = { title: 'Test Track' }
@@ -13,4 +13,3 @@ test('playlist_manager add emits text message', async () => {
   expect(received).toBeTruthy()
   expect(received.text).toMatch(/Added/)
 })
-

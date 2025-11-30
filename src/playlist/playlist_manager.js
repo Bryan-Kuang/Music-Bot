@@ -1,6 +1,6 @@
 const EventEmitter = require('events')
-const AudioManager = require('./audio/manager')
-const logger = require('./logger_service')
+const AudioManager = require('../audio/manager')
+const logger = require('../services/logger_service')
 
 class PlaylistManager {
   constructor() {
@@ -53,7 +53,19 @@ class PlaylistManager {
       return false
     }
   }
+
+  clear(guildId) {
+    try {
+      const player = this.audioManager.getPlayer(guildId)
+      player.clearQueue()
+      this.emitMessage(guildId, '🗑️ Cleared all tracks')
+      return true
+    } catch (e) {
+      logger.error('Clear playlist failed', { guildId, error: e.message })
+      this.emitMessage(guildId, `❌ Clear failed: ${e.message}`)
+      return false
+    }
+  }
 }
 
 module.exports = new PlaylistManager()
-
