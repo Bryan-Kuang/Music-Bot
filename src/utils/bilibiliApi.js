@@ -12,6 +12,13 @@ class BilibiliAPI {
       "User-Agent":
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       Referer: "https://www.bilibili.com/",
+      Accept: "application/json, text/plain, */*",
+      "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+      "Accept-Encoding": "gzip, deflate, br", // axios handles decompression, but sending this header mimics browser
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-site",
+      Cookie: "buvid3=infoc;",
     };
   }
 
@@ -43,16 +50,8 @@ class BilibiliAPI {
             tids: 0,
           },
           headers: {
-            "User-Agent":
-              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            Referer: "https://www.bilibili.com/",
-            Accept: "application/json, text/plain, */*",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br",
+            ...this.headers,
             Connection: "keep-alive",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-site",
           },
           timeout: 10000,
         }
@@ -269,7 +268,11 @@ class BilibiliAPI {
           const parsed = this.parseSearchResults(r.value.data.data);
           all.push(...parsed.videos);
         } else if (r.status === "rejected") {
-          logger.warn("Page fetch rejected", { reason: r.reason?.message });
+          logger.warn("Page fetch rejected", {
+            reason: r.reason?.message,
+            status: r.reason?.response?.status,
+            data: r.reason?.response?.data,
+          });
         }
       }
 
