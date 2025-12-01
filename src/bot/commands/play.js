@@ -55,12 +55,14 @@ module.exports = {
         });
       }
 
+      // Defer reply immediately to prevent timeout
+      await interaction.deferReply({ ephemeral: true });
+
       const player = AudioManager.getPlayer(interaction.guild.id);
       const joined = await player.joinVoiceChannel(member.voice.channel);
       if (!joined) {
-        return await interaction.reply({
+        return await interaction.editReply({
           content: "Failed to join voice",
-          ephemeral: true,
         });
       }
       const track = await PlaylistManager.add(
@@ -69,9 +71,8 @@ module.exports = {
         user.displayName || user.username
       );
       if (!track) {
-        return await interaction.reply({
+        return await interaction.editReply({
           content: "Add failed",
-          ephemeral: true,
         });
       }
       InterfaceUpdater.setPlaybackContext(
@@ -81,9 +82,8 @@ module.exports = {
       if (!player.isPlaying && !player.isPaused) {
         await PlayerControl.play(interaction.guild.id);
       }
-      await interaction.reply({
+      await interaction.editReply({
         content: "🎵 已添加并开始播放",
-        ephemeral: true,
       });
       logger.info("Play command completed", {
         url,
